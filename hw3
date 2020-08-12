@@ -1,0 +1,76 @@
+1) Construct a program whose input a prime integer 𝑝 and a positive integer 𝑎 < 𝑝. The program outputs the order of 𝑎 in the group (𝑍𝑝*,·).
+
+p = int(input("Enter a prime integer number: "))
+a = int(input("Enter a integer number smaller then p (a<p): "))
+reminder = [] rset = ()
+for j in range (p):
+    r = (a**j) % p
+    reminder.append(r)
+    rset = set(reminder)
+    count1 = len(rset)
+    print("The order of " + str(a) + " in the group Z*" + str(p) + " = " + str(count1))
+
+
+2)Construct a program whose input is a positive integer 𝑛 the output is the order of 𝐺 = (𝑍𝑛*,·).
+
+n = int(input("Enter an integer number: "))
+factors = [] def isPrime(a):
+prime = True
+for i in range(2,a):
+if a%i == 0: prime = False
+return (prime)
+def factorization(a): for i in range(2,a):
+if(isPrime(i)==True): if(a%i == 0):
+factors.append(i) return factors
+if(isPrime(n) == True): degree = n-1
+else:
+f = factorization(n) d=1
+for i in range(len(f)):
+d = d*(1-(1/f[i])) degree = int(n * d)
+print("The degree of Z*{} is {} ".format(n, degree))
+
+3)Construct a program whose input a prime number 𝑝 > 4 and an elliptic curve 𝑦2 =
+𝑥3 + 𝐴𝑥 + 𝐵 𝑚𝑜𝑑 𝑝. The program should first check if the discriminant of the curve
+isnonzero.Thenforanygivenpoints𝑃 = (𝑥 ,𝑦 )and𝑃 = (𝑥 ,𝑦 )onthecurve𝐸 111222
+𝑚𝑜𝑑 𝑝, it returns (𝑥 , 𝑦 ) = 𝑃 = 𝑃 + 𝑃 33312
+
+
+from sympy import mod_inverse
+p = int(input("Enter prime number >4: "))
+def isPrime(a): prime = True
+for i in range(2,a):
+if a%i == 0: prime = False
+return (prime)
+def solution(x1,y1,x2,y2,A): if(x1 != x2):
+k = (y2-y1)
+l = (x2-x1)
+t = mod_inverse(l,p)
+m = (k*t)%p
+x3 = (m-x1-x2)%p
+y3 = (m*(x1-x3)-y1)%p
+print("P1 + P2 = (" + str(x3) + " , " + str(y3) + ")")
+elif(y1 != y2):
+print("P1 + P2 = infinity")
+elif(y1 != 0):
+f = mod_inverse(2*y1,p)
+print("inverse is {}".format(f))
+m = ((3*x1+A)*f)%p
+print(m)
+print("x1 is {}".format(x1))
+print("p is {}".format(p))
+x3 = ((m*m)-(2*x1))%p
+y3 = (m*(x1-x3)-y1)%p
+print("P1 + P2 FFF = (" + str(x3) + " , " + str(y3) + ")")
+else:
+print("2P1 = inifinity")
+if(p<4):
+print("You have entered smaller then 4")
+else:
+if(isPrime(p)== False):
+print("You don't enter prime number") else:
+A = int(input("Enter A for (E= y^2 = x^3 + Ax + B): A= ")) B = int(input("Enter B for (E= y^2 = x^3 + Ax + B): B= ")) 
+delta = -16*(4*(A*A*A)+27*B)
+if(delta == 0):
+print("This equation is not elliptic curve")
+else:
+p11 = int(input("Enter first parameter of P1: x1= ")) p12 = int(input("Enter second parameter of P1: y1= ")) p21 = int(input("Enter first parameter of P2: x2= ")) p22 = int(input("Enter second parameter of P2: y2= ")) solution(p11,p12,p21,p22,A)
