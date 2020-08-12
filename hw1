@@ -1,0 +1,11 @@
+Construct a program whose inputs are two positive integers a and b and output is the greatest common divisor of them that 
+is d = gcd(a,b) is the output.
+
+int euclid_gcd(int a, int b) 
+{
+  while(a>0 && b >0)
+    { 
+    if(a>b) a%b; else b%a;
+    int d; d=b+a; return d;
+    }
+}
