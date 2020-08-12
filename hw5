@@ -1,0 +1,203 @@
+1. First define intervals 𝐼𝑖 where the order of the following elliptic curves 𝐸𝑖 over Ϝ𝑝𝑖 groups
+lie. For any curve 𝐸 defined below, a point 𝑃 on it is also given. Construct a program that 𝑖𝑖
+checks if 𝑎 𝑃 = ∞ for all 𝑎 ∈ 𝐼 . Conclude the exact order of each curve. 
+
+
+In general:
+Finding maximum number of points on the curve 𝑬: 𝒚𝟐 = 𝒙𝟑 + 𝑨𝒙 + B, where p is a prime number and 𝔽𝒑 is a finite field with p elements.
+Then, #𝑬(𝔽𝒑) ∈ [𝟏, 𝟐𝒑 + 𝟏] and can be written by Hasse’s theorem: 𝒑 ≤ #𝑬(𝔽𝒑) ≤ 𝟐𝒑 + 𝟏
+𝟐
+𝒑− 𝟐√𝒑 +𝟏≤#𝑬(𝔽𝒑)≤𝒑+𝟏+𝟐√𝒑
+shows the max and min number of points on E.
+
+
+(a) 𝑝 = 34511 and 𝐸 ∶ 𝑦2 = 𝑥3 + 2020𝑥 + 2201 over Ϝ . Then 𝑃 = (2,2528). 11 𝑝11
+𝟑𝟒𝟓𝟏𝟏 − 𝟐√𝟑𝟒𝟓𝟏𝟏 + 𝟏 ≤ #𝑬(Ϝ𝒑𝟏)≤ 𝟑𝟒𝟓𝟏𝟏+ 𝟐√𝟑𝟒𝟓𝟏𝟏+ 𝟏 𝟑𝟒𝟏𝟒𝟏 ≤ #𝑬 ≤ 𝟑𝟒𝟖𝟖𝟑
+Check 𝒂𝒊𝑷𝒊 = ∞ for all possible 𝒂𝒊 values, the result shows the order of the curve is 34860.
+
+
+(b)𝑝 = 65761and𝐸 ∶ 𝑦2 = 𝑥3 + 453𝑥 + 5543overϜ and𝑃 =(2,22403). 22 𝑝22
+𝟔𝟓𝟕𝟔𝟏 − 𝟐√𝟔𝟓𝟕𝟔𝟏 + 𝟏 ≤ #𝑬(Ϝ𝒑𝟐) ≤ 𝟔𝟓𝟕𝟔𝟏+ 𝟐√𝟔𝟓𝟕𝟔𝟏+ 𝟏
+65250 ≤ #𝐸 ≤ 66274
+Check 𝒂𝒊𝑷𝒊 = ∞ for all possible 𝒂𝒊 values, the result shows the order of the curve
+    is 65932.
+    
+    
+(c) 𝑝 = 9851, 𝐸 ∶ 𝑦2 = 𝑥3 + 73𝑥 + 83 over the finite field Ϝ and 𝑃 = (1,3719).
+33 𝑝33 𝟗𝟖𝟓𝟏− 𝟐√𝟗𝟖𝟓𝟏+ 𝟏 ≤ #𝑬(Ϝ𝒑𝟑) ≤ 𝟗𝟖𝟓𝟏+ 𝟐√𝟗𝟖𝟓𝟏 + 𝟏
+9654 ≤ #𝐸 ≤ 10050
+Check 𝒂𝒊𝑷𝒊 = ∞ for all possible 𝒂𝒊 values, the result shows the order of the curve
+is 9954.
+Coding Part:
+
+p = 34511
+ 
+a = 2020
+b = 2201 generator=(2, 2528)
+def gcd_EE(a, b): s, old_s = 0, 1 t, old_t = 1, 0 r, old_r = b, a
+while r != 0:
+q = old_r // r
+old_r, r = r, old_r - q * r old_s, s = s, old_s - q * s old_t, t = t, old_t - q * t
+return old_r, old_s, old_t
+def egcd(n, p):
+gcd, x, y = gcd_EE(n, p) if gcd != 1:
+raise ValueError("{} has no multiplicative inverse modulo {}".format(n, p)) else:
+returnx%p
+def ecc_double(x1, y1, p, a):
+s = ((3*(x1**2) + a) * egcd(2*y1, p))%p x3 = (s**2 - x1 - x1)%p
+y3 = (s*(x1-x3) - y1)%p
+return (x3, y3)
+def find_point(c): result = []
+for x in range(p):
+for y in range(p - 1):
+y_square = (y * y) % p
+f_x = (x ** 3 + a * x + b) % p if (y_square == f_x):
+result.append([x, y]) c-=1
+if (c == 0):
+return result return result
+def ecc_add(x1, y1, x2, y2, p, a): s =0
+if (x1==x2):
+s = ((3*(x1**2) + a) * egcd(2*y1, p))%p
+else:
+s = ((y2-y1) * egcd(x2-x1, p))%p
+x3 = (s**2 - x1 - x2)%p
+
+y3 = (s*(x1 - x3) - y1)%p return (x3, y3)
+def double_and_add(multi, generator, p, a): (x3, y3)=(0, 0)
+(x1, y1) = generator
+(x_tmp, y_tmp) = generator
+init=0
+for i in str(bin(multi)[2:]):
+if (i=='1') and (init==0): init=1
+elif (i=='1') and (init==1):
+(x3,y3) = ecc_double(x_tmp, y_tmp, p, a) (x3,y3) = ecc_add(x1, y1, x3, y3, p, a) (x_tmp, y_tmp) = (x3, y3)
+else:
+(x3, y3) = ecc_double(x_tmp, y_tmp, p, a) (x_tmp, y_tmp) = (x3, y3)
+return (x3, y3)
+border1 = int(((p**(1/2))-1)**2) + 1
+border2 = int(((p**(1/2))+1)**2) + 1
+print(" E : y^2 = x^3 + {}x + {} over Fp, p={} and generator = {}".format(a,b,p,generator)) print("\tHasse-Weil bound is between {} and {}".format(border1, border2))
+while True: Q=()
+for i in range(border1, border2): try:
+Q = double_and_add(i, generator, p, a) except ValueError:
+print("#E is: ", i)
+break break
+
+2. Consider the elliptic curve 𝐸 ∶ 𝑦2 = 𝑥3 + 1811𝑥 + 2018 over the finite field 𝐹 . 54877
+Considerthepoint𝑃 = (2,23969)onthecurve𝐸.UsingHasse-Weilbound,findtheorder of 𝑃. 
+Then find at least 5 points on the curve whose orders are exactly 13723.
+
+𝟓𝟒𝟖𝟕𝟕 − 𝟐√𝟓𝟒𝟖𝟕𝟕 + 𝟏 ≤ #𝑬(𝑭𝟓𝟒𝟖𝟕𝟕) ≤ 𝟓𝟒𝟖𝟕𝟕 + 𝟐√𝟓𝟒𝟖𝟕𝟕 + 𝟏
+54410 ≤ #𝐸 ≤ 55346
+After checking the condition 𝒂𝒊𝑷𝒊 = ∞ for all possible ai values, the result was that the order of the curve is 54892 which is equal to 2*2*13723.
+E(𝑭𝒑)= k= 54892.
+kQ= 13723*4Q= ∞ mod p, where Q∈ E(𝑭𝒑).
+  
+Points of order 13723 can be obtained by checking whether 13723P = ∞.
+We can get points of order exactly 13723 by multiplying point P by 4 => 4P. These are:
+P1= (4371, 15530) P2= (27024, 19569) P3= (5426, 39493) P4= (1199, 6147) P5= (23052, 53384)
+Coding Part:
+p = 54877
+A = 1811 B=2018
+P = [2, 23969]
+def gcd_EE(a, b): s, old_s = 0, 1 t, old_t = 1, 0 r, old_r = b, a
+while r != 0:
+q = old_r // r
+old_r, r = r, old_r - q * r old_s, s = s, old_s - q * s old_t, t = t, old_t - q * t
+return old_r, old_s, old_t
+def extended_euclidian(n, p):
+gcd, x, y = gcd_EE(n, p)
+assert (n * x + p * y) % p == gcd
+if gcd != 1:
+raise ValueError("{} has no multiplicative inverse modulo {}".format(n, p))
+else: returnx%p
+def solution(x1, y1, x2, y2, A): x_y_result = []
+count_a = False
+if (x1 != x2):
+k=(y2-y1)
+l = (x2 - x1)
+t = extended_euclidian(l, p)
+ 
+m = (k * t) % p
+x_result = (m * m - x1 - x2) % p y_result = (m * (x1 - x_result) - y1) % p
+elif (y1 != y2):
+x_result, y_result = "I", "I" count_a = True
+elif (y1 != 0):
+f = extended_euclidian(2 * y1, p)
+m = ((3 * (x1 ** 2) + A) * f) % p x_result=((m*m)-(2*x1))%p y_result = (m * (x1 - x_result) - y1) % p
+else:
+x_result, y_result = "I", "I" count_a = True
+x_y_result.append(x_result) x_y_result.append(y_result)
+return x_y_result, count_a
+def find_binary(b): binary = []
+q= 1
+while (b >= 2):
+q = b // 2 r=b%2 binary.append(r) b= q
+binary.append(q) return binary
+def power(x, j, root, A):
+for i in range(j + 1, x + 1):
+x = root[0]
+y = root[1]
+root, count_a = solution(x, y, x, y, A)
+return root
+def find_point(c): result = []
+for x in range(p):
+for y in range(p - 1):
+y_square = (y * y) % p
+f_x = (x ** 3 + A * x + B) % p if (y_square == f_x):
+result.append([x, y]) c-=1
+if (c == 0):
+
+return result return result
+def factorization(a): factors = []
+for i in range(2, a + 1):
+if (a % i == 0): factors.append(i)
+return factors
+def find_order(a, P):
+order_list = []
+sum_result = []
+result_binary = find_binary(a) j= 0
+for i in range(len(result_binary)): result_mult = []
+if result_binary[i] == 1:
+if j == 0:
+result_mult = power(i, 0, P, A)
+else:
+result_mult = power(i, j, sum_result[-1], A)
+j= i
+sum_result.append(result_mult) new_x_y = []
+while len(sum_result) >= 2:
+p11 = sum_result[-1][0]
+p12 = sum_result[-1][1]
+p21 = sum_result[-2][0]
+p22 = sum_result[-2][1]
+new_x_y, count_a = solution(p11, p12, p21, p22, A) if (count_a == True):
+if (len(sum_result) == 2): order_list.append(a)
+break
+sum_result.pop() sum_result.pop() sum_result.append(new_x_y)
+return order_list
+border1 = int(((p ** (1 / 2)) - 1) ** 2) + 1
+border2 = int(((p ** (1 / 2)) + 1) ** 2) + 1
+print("For the equation E : y^2 = x^3 + {}x + {} over Fp where p={} and the point P = {}".format(A, B, p, P))
+print("\tHasse-Weil bound is between {} - {}".format(border1, border2))
+for a in range(border1, border2):
+
+result_order = find_order(a, P) if (len(result_order) != 0):
+print("\t#E: {}".format(result_order)) order = result_order[0]
+order_factors = factorization(order) point_order = []
+i =0
+while (len(point_order) == 0):
+point_order = find_order(order_factors[i], P)
+i+=1
+print("\n#P = {} is {}".format(P, point_order))
+point_list = find_point(5)
+q_point_list = []
+print("\n5 points whose orders are 13723:") for i in range(len(point_list)):
+p11 = point_list[i][0]
+p12 = point_list[i][1]
+square_q, count = solution(p11, p12, p11, p12, A) p21 = square_q[0]
+p22 = square_q[1] q_point_list.append(solution(p21, p22, p21, p22, A))
+print("Q =",q_point_list[i][0])
+
+
+
+
