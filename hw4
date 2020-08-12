@@ -1,0 +1,92 @@
+1. Construct a program whose inputs are integers 𝑎, 𝑏, 𝑝 and output is 𝑎𝑏 𝑚𝑜𝑑 𝑝. The
+program should have at most 3𝑙𝑜𝑔𝑝 multiplication 𝑚𝑜𝑑 𝑝.
+
+Explanation:
+1- Fırst of all we have math b and p
+1.1 if b = p-1, then result =1 and the number of multiplication is 0. 1.2 if b>= p, then we subtract p-1(the order) from b, up to b<p 1.3 if b<p, we have continue to find result
+2- We have turn b to binary numbers to find binary function. We have also count all operation 3- We have find power of a, with binary equation of b for digit 1. Because a is the multiplication of a, a^2, a^4, a^8, ..... (We have also count all operations)
+4- Finally, the result is multiplication of powers, we have found on 3th step.
+5- We add all counts to find total operations.
+6- We have match total counts and 3*log(base 2)p.
+
+
+import math
+a = int(input("Enter an integer as 'a' : "))
+b = int(input("Enter an integer as 'b' : "))
+p = int(input("Enter an prime number as 'p' bigger than a and b : ")) sum_result=[]
+count = []
+result = 1
+def find_binary(b): binary = [] count1 = 0
+q= 1
+while (b>= 2):
+q = b//2 r=b%2 binary.append(r) b= q
+count1 = count1 +1 binary.append(q)
+print("binary is {}".format(binary)) return binary, count1
+def power(x,j,root): count2 = 0
+for i in range (x-j):
+root = (root * root)%p
+count2 = count2 +1 print("mul is {}".format(root))
+return root, count2
+if (b == p-1): result = 1
+else:
+while (b>=p):
+b = b-(p-1)
+result_binary, count_binary = find_binary(b) count.append(count_binary)
+j= 0
+for i in range(len(result_binary)):
+result_mult = [] count_pow = []
+if result_binary[i] == 1:
+if j == 0:
+result_mult, count_pow = power(i,0,a)
+else:
+result_mult, count_pow = power(i,j,sum_result[-1])
+sum_result.append(result_mult) j= i
+count.append(count_pow)
+print("sum result = {}".format(sum_result))
+count3 = 0
+for i in range(len(sum_result)):
+result = (result * sum_result[i])%p
+count3 = count3 +1 count.append(count3)
+print("result is {}".format(result))
+performans = sum(count)
+number = 3*(math.log(p)/math.log(2))
+print("performans = {} and 3 log p {}".format(performans, number))
+
+
+
+2. Construct a program that computes the number of elements in an elliptic curve group
+𝑚𝑜𝑑 𝑝. The program should make use of the following fact: An element 𝑎 𝑚𝑜𝑑 𝑝 has
+a square root if and only if 𝑎**(p-1/2) ≡ 1 𝑚𝑜𝑑 𝑝.
+  
+Explanation:
+1- We have taken p, A and B to construct elliptic curve y^2=x^3 + Ax + B
+2- Then we have calculate all y^2 from 1 to (p-1)/2 mod p . Because the results are symmetric for median of y. (Ex: 1**2 = (p-1)**2 and 2**2 = (p-2)**2 ..etc)
+3- We have insert all numbers from 0 to p-1, and we have found x^3 + Ax + B values. And we checked the result is available on y^2 list, which we found on 2nd step.
+3.1 If it is available on y^2 list, then we have increase count 2. Because it has two root on this point for -y and +y
+3.2 If it is '0'. Then we have increase count just 1.
+3.3 If it is not found on the list, we don't increase count.
+4- We have sum all counts and add 1 more. Because identity also included. 5- Then we have print the all point as sum of count.
+
+
+p = int(input("Please enter 'p' as prime number: "))
+A = int(input("Please enter A for y^2 = x^3 + Ax +B: ")) B = int(input("Please enter B for y^2 = x^3 + Ax +B: "))
+result_y = []
+for j in range((p-1)//2 + 1): result = (j*j)%p result_y.append(result)
+count = 0
+for i in range(p):
+y_square = (i**3 + A*i + B)%p
+if y_square == 0: count = count+1
+elif (y_square in result_y): count = count + 2
+print("The order of 'y^2 = x^3 + {}x + {} on mod {} is: {}".format(A,B,p, count+1))
+or
+
+
+Pseudocode:
+define A, B, p count is equal to 0 for x is less than p:
+y2← (x^3+A*x+B) mod p if y2 is equal to 0:
+count :=count+1 else:
+power← (y2 ^ ((p-1)/2)) mod p if power is equal to 1:
+count :=count+2 Print count+1 // +1 for the point of infinit
+
+
+
