@@ -1,0 +1,39 @@
+(Extended Euclidean Algorithm) Construct a program that gives 𝑑 = 𝑔𝑐𝑑(𝑎,𝑏) for given positive integers 𝑎 and 𝑏.
+The output also includes integers 𝑥, 𝑦 such that 𝑎𝑥 +𝑏𝑦 = 𝑑.
+
+
+Computing gcd of a and b
+
+a = int(input("Enter a first integer: "))
+b = int(input("Enter a second integer: ")) 
+if a>b:
+m=a
+n=b else:
+m=b n=a
+r=m%n
+while(r!=0): 
+     m=n
+     n=r r=m%n
+     gcd=n
+
+Finding x and y where d = ax + by'
+d=gcd
+x=0
+y =0
+if (d%a == 0):
+    y=d/a
+elif (d%b == 0):
+     x=d/b 
+else:
+     x=x+1
+     y1 = (d-(x*a))%b
+     y2 = (d+(x*a))%b
+    if (y1 != 0 and y2 !=0):
+        while(y1 !=0 and y2 !=0): 
+        x=x+1
+        y1 = (d-(x*a))%b
+        y2 = (d+(x*a))%b if(y1 == 0):
+        y = (d-(x*a))/b 
+    elif(y2 == 0):
+        y = (d+(x*a))/b x=-1*x
+    print("d="+str(gcd)+"x="+str(x)+"y="+str(int(y)))
