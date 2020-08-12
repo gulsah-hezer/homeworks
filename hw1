@@ -1,5 +1,5 @@
-Construct a program whose inputs are two positive integers a and b and output is the greatest common divisor of them that 
-is d = gcd(a,b) is the output.
+//Construct a program whose inputs are two positive integers a and b and output is the greatest common divisor of them that 
+//is d = gcd(a,b) is the output.
 
 int euclid_gcd(int a, int b) 
 {
